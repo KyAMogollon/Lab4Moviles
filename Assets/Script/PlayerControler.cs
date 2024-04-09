@@ -16,7 +16,8 @@ public class PlayerControler : MonoBehaviour
 
     public bool Giroscopio;
     public bool Acelerometro;
-
+    [SerializeField] ObjectPoolDinamic poolDinamic;
+    [SerializeField] GameManager _gm;
     // Start is called before the first frame update
     void Start()
     {
@@ -28,6 +29,7 @@ public class PlayerControler : MonoBehaviour
         name = SelectionCharacter.Instance.name;
         _sp.color = SelectionCharacter.Instance.colornNavE;
         transform.Rotate(0,0,-90);
+        _gm.LifeText(live);
 
         if (SystemInfo.supportsGyroscope)
         {
@@ -41,7 +43,20 @@ public class PlayerControler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Giroscopio==true)
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+            if (touch.phase == TouchPhase.Began)
+            {
+
+                InvokeRepeating("Shoot", 0, 0.5f);
+            }
+            else if (touch.phase == TouchPhase.Ended)
+            {
+                CancelInvoke("Shoot");
+            }
+        }
+        if (Giroscopio==true)
         {
             float x = gyroscope.rotationRateUnbiased.x;
             float inputY = x;
@@ -58,12 +73,18 @@ public class PlayerControler : MonoBehaviour
 
 
     }
+    public void Shoot()
+    {
+        Debug.Log("Estoy invocando");
+        poolDinamic.GetObject(transform.position);
+    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Enemy")
+        if (collision.gameObject.tag == "Enemy"|| collision.gameObject.tag=="Alienigena")
         {
             live--;
-            Destroy(collision.gameObject);
+            _gm.LifeText(live);
+            collision.gameObject.SetActive(false);
             if (live <= 0)
             {
                 puntaje.ResetCurrentScore();

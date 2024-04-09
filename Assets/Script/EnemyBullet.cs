@@ -6,23 +6,24 @@ public class EnemyBullet : MonoBehaviour
 {
     public float speed = 6;
     PlayerControler player;
-    // Start is called before the first frame update
-    void Start()
+    Rigidbody2D _rb;
+
+    void Awake()
     {
+        _rb = GetComponent<Rigidbody2D>();
         player = GameObject.FindWithTag("Player").GetComponent<PlayerControler>();
     }
-
-    // Update is called once per frame
-    void Update()
+    private void OnEnable()
     {
-        transform.position = new Vector3(transform.position.x - speed * (Time.deltaTime*player.velocityHorizontal), transform.position.y, transform.position.z);
-
+        //transform.position = new Vector3(transform.position.x - speed * (Time.deltaTime * player.velocityHorizontal), transform.position.y, transform.position.z);
+        _rb.velocity = Vector2.left*speed;
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Wall")
+        if(collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Wall"))
         {
-            Destroy(gameObject);
+            gameObject.SetActive(false);
+
         }
     }
 }

@@ -7,7 +7,9 @@ public class EnemyController : MonoBehaviour
     public GameObject[] target;
     public float TimeToWait = 1;
     private float currentTime;
-    public GameObject enemy;
+    //public GameObject enemy;
+    public ObjectPoolStatic pool;
+    public ObjectPoolStatic poolStatic;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,7 +29,11 @@ public class EnemyController : MonoBehaviour
     }
     public void SpawnEnemy()
     {
-        int rnd = Random.Range(0,target.Length);
-        Instantiate(enemy, target[rnd].transform.position,Quaternion.identity);
+        int rnd = Random.Range(0, target.Length);
+        int rnd2 = Random.Range(0, target.Length);
+        GameObject obj = pool.RequestBullet();
+        GameObject obj2 = poolStatic.RequestBullet();
+        obj2.transform.position = target[rnd2].transform.position;
+        obj.transform.position = target[rnd].transform.position;
     }
 }
